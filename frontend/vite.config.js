@@ -1,0 +1,28 @@
+import { defineConfig } from 'vite'
+import vue from '@vitejs/plugin-vue'
+
+export default defineConfig({
+    plugins: [
+        vue({
+            template: {
+                compilerOptions: {
+                    // Treat wa-* tags as custom elements (Web Awesome)
+                    isCustomElement: tag => tag.startsWith('wa-')
+                }
+            }
+        })
+    ],
+    server: {
+        port: 5173,
+        proxy: {
+            '/api': {
+                target: 'http://localhost:3000',
+                changeOrigin: true
+            }
+        }
+    },
+    build: {
+        outDir: '../backend/public',
+        emptyOutDir: true
+    }
+})
