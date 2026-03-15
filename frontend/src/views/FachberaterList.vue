@@ -19,7 +19,6 @@
                 <wa-option value="">Alle Status</wa-option>
                 <wa-option value="neu">Neu</wa-option>
                 <wa-option value="registriert">Registriert</wa-option>
-                <wa-option value="nicht_registriert">Nicht registriert</wa-option>
                 <wa-option value="vollstaendig">Vollständig</wa-option>
             </wa-select>
             <wa-select class="filter-select" :value="store.filterRp" @change="store.setFilters({ rp: $event.target.value })">

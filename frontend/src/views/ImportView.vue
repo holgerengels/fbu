@@ -11,7 +11,7 @@
             <div class="action-card card">
                 <div class="action-icon">📄</div>
                 <h3 class="action-title">CSV-Import</h3>
-                <p class="action-desc">Fachberater aus <code>config/input.csv</code> einlesen. Duplikate werden übersprungen.</p>
+                <p class="action-desc">Fachberater aus <code>config/input.csv</code> einlesen.</p>
                 <wa-button appearance="filled" @click="doAction('csv')" :disabled="loading" :loading="loading === 'csv'">
                     {{ loading === 'csv' ? 'Importiere…' : 'CSV importieren' }}
                 </wa-button>

@@ -89,6 +89,24 @@
     --sidebar-width: 240px;
 }
 
+/* Dark theme fix for select dropdown options */
+wa-select::part(listbox) {
+    background: #1e2230;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+wa-option {
+    color: #e8eaf0;
+}
+
+wa-option::part(base) {
+    color: #e8eaf0;
+}
+
+wa-option::part(base):hover {
+    background: rgba(79, 143, 247, 0.15);
+}
+
 html {
     font-size: 16px;
     -webkit-font-smoothing: antialiased;
