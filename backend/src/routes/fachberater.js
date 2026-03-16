@@ -1,16 +1,18 @@
 const express = require('express');
 const router = express.Router();
 const Fachberater = require('../models/Fachberater');
+const MoodleProfile = require('../models/MoodleProfile');
 
 // GET /api/fachberater/stats - Dashboard statistics
 router.get('/fachberater/stats', async (req, res) => {
     try {
-        const [total, neu, registriert, nichtRegistriert, vollstaendig] = await Promise.all([
+        const [total, neu, registriert, nichtRegistriert, vollstaendig, moodleProfileCount] = await Promise.all([
             Fachberater.countDocuments(),
             Fachberater.countDocuments({ status: 'neu' }),
             Fachberater.countDocuments({ status: 'registriert' }),
             Fachberater.countDocuments({ status: 'nicht_registriert' }),
-            Fachberater.countDocuments({ status: 'vollstaendig' })
+            Fachberater.countDocuments({ status: 'vollstaendig' }),
+            MoodleProfile.countDocuments()
         ]);
 
         const rpStats = await Fachberater.aggregate([
@@ -24,6 +26,7 @@ router.get('/fachberater/stats', async (req, res) => {
             registriert,
             nicht_registriert: nichtRegistriert,
             vollstaendig,
+            moodleProfiles: moodleProfileCount,
             byRp: rpStats.map(r => ({ rp: r._id, count: r.count }))
         });
     } catch (err) {

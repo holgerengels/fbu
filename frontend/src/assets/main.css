@@ -107,6 +107,12 @@ wa-option::part(base):hover {
     background: rgba(79, 143, 247, 0.15);
 }
 
+/* Tags – kräftiger im Dark Mode */
+wa-tag {
+    --wa-border-width-s: 2px;
+    font-weight: 700;
+}
+
 html {
     font-size: 16px;
     -webkit-font-smoothing: antialiased;

@@ -2,7 +2,7 @@
     <div class="detail-view fade-in">
         <!-- Top bar -->
         <div class="detail-topbar">
-            <router-link to="/fachberater" class="back-link">← Zurück zur Liste</router-link>
+            <wa-button size="small" @click="$router.push('/fachberater')">← Zurück zur Liste</wa-button>
             <div class="nav-buttons" v-if="navTotal > 0">
                 <wa-button size="small" :disabled="!navPrevId" @click="goTo(navPrevId)">‹ Vorheriger</wa-button>
                 <span class="text-muted text-sm">{{ navIndex + 1 }} / {{ navTotal }}</span>
@@ -24,9 +24,9 @@
                     <div class="flex items-center gap-md badge-row">
                         <wa-select ref="badgeSelect" multiple with-clear size="small" class="badge-select"
                             .value="statusBadges" @wa-change="onBadgeChange">
-                            <wa-option value="neu"><wa-tag variant="brand" appearance="filled-outlined" pill size="small">Neu</wa-tag></wa-option>
-                            <wa-option value="registriert"><wa-tag variant="success" appearance="filled-outlined" pill size="small">Registriert</wa-tag></wa-option>
-                            <wa-option value="vollstaendig"><wa-tag variant="warning" appearance="filled-outlined" pill size="small">Vollständig</wa-tag></wa-option>
+                            <wa-option value="neu"><wa-tag variant="brand" appearance="outlined" pill size="small">Neu</wa-tag></wa-option>
+                            <wa-option value="registriert"><wa-tag variant="success" appearance="outlined" pill size="small">Registriert</wa-tag></wa-option>
+                            <wa-option value="vollstaendig"><wa-tag variant="warning" appearance="outlined" pill size="small">Vollständig</wa-tag></wa-option>
                         </wa-select>
                         <span class="text-secondary text-sm" v-if="fb.matchScore">Score: {{ (fb.matchScore * 100).toFixed(1) }}%</span>
                     </div>
@@ -192,6 +192,8 @@ function colorBadgeTags() {
         const text = tag.textContent?.trim().toLowerCase()
         const variant = badgeVariants[text]
         if (variant) tag.setAttribute('variant', variant)
+        tag.setAttribute('pill', '')
+        tag.setAttribute('appearance', 'outlined')
     })
 }
 
@@ -299,16 +301,6 @@ onMounted(() => {
     align-items: center;
     gap: var(--space-md);
 }
-.back-link {
-    display: inline-flex;
-    align-items: center;
-    font-size: var(--font-sm);
-    color: var(--text-secondary);
-    transition: color var(--transition-fast);
-}
-.back-link:hover {
-    color: var(--accent-blue);
-}
 
 .detail-header {
     display: flex;
@@ -329,6 +321,8 @@ onMounted(() => {
 .badge-select {
     min-width: 350px;
     --tag-max-size: 20ch;
+    --wa-border-width-s: 2px;
+    font-weight: 700;
 }
 
 .detail-layout {

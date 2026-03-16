@@ -15,15 +15,15 @@
                 @input="onSearch($event.target.value)"
                 @wa-clear="onSearch('')"
             ></wa-input>
+            <wa-select class="filter-select" :value="store.filterRp" @change="store.setFilters({ rp: $event.target.value })">
+                <wa-option value="">Alle RP</wa-option>
+                <wa-option v-for="rp in rpOptions" :key="rp" :value="rp">{{ rp }}</wa-option>
+            </wa-select>
             <wa-select class="filter-select" :value="store.filterStatus" @change="store.setFilters({ status: $event.target.value })">
                 <wa-option value="">Alle Status</wa-option>
                 <wa-option value="neu">Neu</wa-option>
                 <wa-option value="registriert">Registriert</wa-option>
                 <wa-option value="vollstaendig">Vollständig</wa-option>
-            </wa-select>
-            <wa-select class="filter-select" :value="store.filterRp" @change="store.setFilters({ rp: $event.target.value })">
-                <wa-option value="">Alle RP</wa-option>
-                <wa-option v-for="rp in rpOptions" :key="rp" :value="rp">{{ rp }}</wa-option>
             </wa-select>
         </div>
 
@@ -66,7 +66,7 @@
                         <td class="text-secondary">{{ fb.email || '—' }}</td>
                         <td>
                             <span class="badge-list">
-                                <wa-tag v-for="s in badgeArray(fb.status)" :key="s" :variant="badgeVariant(s)" appearance="filled-outlined" pill size="small">{{ badgeLabel(s) }}</wa-tag>
+                                <wa-tag v-for="s in badgeArray(fb.status)" :key="s" :variant="badgeVariant(s)" appearance="outlined" pill size="small">{{ badgeLabel(s) }}</wa-tag>
                             </span>
                         </td>
                         <td class="text-muted">{{ fb.matchScore ? (fb.matchScore * 100).toFixed(1) + '%' : '—' }}</td>

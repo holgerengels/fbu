@@ -139,63 +139,8 @@ router.post('/import/moodle', async (req, res) => {
     }
 });
 
-// Subject abbreviation mapping
-const FACH_MAP = {
-    'M': 'Mathematik',
-    'D': 'Deutsch',
-    'E': 'Englisch',
-    'F': 'Französisch',
-    'S': 'Spanisch',
-    'I': 'Italienisch',
-    'PH': 'Physik',
-    'CH': 'Chemie',
-    'BIO': 'Biologie',
-    'INF': 'Informatik',
-    'SIT': 'System- und Informationstechnik',
-    'NT (SIT)': 'System- und Informationstechnik',
-    'BWL': 'Betriebswirtschaftslehre',
-    'VWL': 'Volkswirtschaftslehre',
-    'VBL': 'Volks- und Betriebswirtschaftslehre',
-    'VBL (BWL)': 'Volks- und Betriebswirtschaftslehre',
-    'GG': 'Geschichte mit Gemeinschaftskunde',
-    'GGP': 'Geschichte mit Gemeinschaftskunde',
-    'GGk': 'Geschichte mit Gemeinschaftskunde',
-    'G/GGK': 'Geschichte mit Gemeinschaftskunde',
-    'GK': 'Gemeinschaftskunde',
-    'FT': 'Fertigungstechnik',
-    'FZT': 'Fahrzeugtechnik',
-    'ENT': 'Energie- und Automatisierungstechnik',
-    'EL': 'Ernährungslehre',
-    'MBT': 'Metalltechnik',
-    'MBT (SHK)': 'Metalltechnik',
-    'MET': 'Metalltechnik',
-    'AT': 'Automatisierungstechnik',
-    'SP': 'Sport',
-    'Sport': 'Sport',
-    'PF': 'Pflege',
-    'GES': 'Gesundheit',
-    'SOP': 'Sozialpädagogik',
-    'PPSP': 'Pädagogik und Psychologie',
-    'TEX': 'Textiltechnik',
-    'ETH': 'Ethik',
-    'ERL': 'Evangelische Religionslehre',
-    'KRL': 'Katholische Religionslehre',
-    'N': 'Nahrung',
-    'PHA': 'Pharmazie',
-    'WLH': 'Wirtschaftslehre des Haushalts',
-    'WSM': 'Wirtschafts- und Sozialmanagement',
-    'HOLZ': 'Holztechnik',
-    'FARG': 'Farbtechnik und Raumgestaltung',
-    'FOTO': 'Fototechnik',
-    'BIOT': 'Biotechnologie',
-    'BIO (BIOT/BIOINF)': 'Biotechnologie',
-    'FT (I 4,0)': 'Fertigungstechnik',
-    'AVdual/ Übergangs-bereich': 'AVdual/Übergangsbereich',
-    'VAB/BEJ': 'VAB/BEJ',
-    'VAB/BVJ/ BEJ': 'VAB/BEJ',
-    'Eng': 'Englisch',
-    'G': 'Geschichte'
-};
+// Subject abbreviation mapping (loaded from config)
+const FACH_MAP = JSON.parse(fs.readFileSync(path.join(__dirname, '../../../config/fach_map.json'), 'utf8'));
 
 function translateFach(raw) {
     const trimmed = raw.trim();

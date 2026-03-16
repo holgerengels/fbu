@@ -23,7 +23,16 @@ router.get('/matching/:id/candidates', async (req, res) => {
         if (!fb) return res.status(404).json({ error: 'Fachberater not found' });
 
         const topN = parseInt(req.query.topN) || matchingConfig.topN || 5;
-        const moodleProfiles = await MoodleProfile.find().lean();
+
+        // Collect moodleIds already linked to other Fachberater (exclude current)
+        const linkedFbs = await Fachberater.find(
+            { moodleId: { $exists: true, $ne: '' }, _id: { $ne: fb._id } },
+            { moodleId: 1 }
+        ).lean();
+        const linkedMoodleIds = new Set(linkedFbs.map(f => f.moodleId));
+
+        const allProfiles = await MoodleProfile.find().lean();
+        const moodleProfiles = allProfiles.filter(mp => !linkedMoodleIds.has(mp.moodleId));
 
         const candidates = findCandidates(fb, moodleProfiles, topN, false);
 
@@ -101,7 +110,16 @@ router.post('/matching/auto', async (req, res) => {
     try {
         const threshold = parseFloat(req.body.threshold) || matchingConfig.threshold || 0.85;
         const fachberaterList = await Fachberater.find({ status: 'neu' }).lean();
-        const moodleProfiles = await MoodleProfile.find().lean();
+
+        // Exclude MoodleProfiles already linked to any Fachberater
+        const linkedFbs = await Fachberater.find(
+            { moodleId: { $exists: true, $ne: '' } },
+            { moodleId: 1 }
+        ).lean();
+        const linkedMoodleIds = new Set(linkedFbs.map(f => f.moodleId));
+
+        const allProfiles = await MoodleProfile.find().lean();
+        const moodleProfiles = allProfiles.filter(mp => !linkedMoodleIds.has(mp.moodleId));
 
         const matches = findUniqueMatches(fachberaterList, moodleProfiles, threshold);
 

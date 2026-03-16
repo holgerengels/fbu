@@ -32,9 +32,10 @@
                 <div class="action-icon">📚</div>
                 <h3 class="action-title">Kraut und Rüben Import</h3>
                 <p class="action-desc">Fächer aus <code>config/kur.csv</code> den Fachberatern zuordnen. Abkürzungen werden übersetzt.</p>
-                <wa-button appearance="filled" @click="doAction('kur')" :disabled="loading" :loading="loading === 'kur'">
+                <wa-button appearance="filled" @click="doAction('kur')" :disabled="loading || !canKur" :loading="loading === 'kur'">
                     {{ loading === 'kur' ? 'Importiere…' : 'KUR importieren' }}
                 </wa-button>
+                <span v-if="!canKur" class="text-muted text-sm">⚠ CSV muss zuerst eingelesen werden</span>
             </div>
 
             <!-- Auto-Match -->
@@ -46,9 +47,10 @@
                     <label class="text-sm text-secondary">Schwellwert:</label>
                     <wa-input class="threshold-input" type="number" :value="String(threshold)" @input="e => threshold = parseFloat(e.target.value) || 0.85" size="small"></wa-input>
                 </div>
-                <wa-button appearance="accent" variant="warning" @click="doAction('auto')" :disabled="loading" :loading="loading === 'auto'">
+                <wa-button appearance="accent" variant="warning" @click="doAction('auto')" :disabled="loading || !canAutoMatch" :loading="loading === 'auto'">
                     {{ loading === 'auto' ? 'Matche…' : 'Auto-Match starten' }}
                 </wa-button>
+                <span v-if="!canAutoMatch" class="text-muted text-sm">⚠ CSV und Moodle müssen zuerst eingelesen werden</span>
             </div>
 
             <!-- CSV Export -->
@@ -125,7 +127,7 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useFachberaterStore } from '../stores/fachberater.js'
 
 const store = useFachberaterStore()
@@ -133,6 +135,18 @@ const loading = ref(null)
 const threshold = ref(0.85)
 
 const result = computed(() => store.lastResult)
+
+const canKur = computed(() => {
+    return store.stats && store.stats.total > 0
+})
+
+const canAutoMatch = computed(() => {
+    return store.stats && store.stats.total > 0 && store.stats.moodleProfiles > 0
+})
+
+onMounted(() => {
+    store.fetchStats()
+})
 
 async function doAction(type) {
     loading.value = type
@@ -147,6 +161,7 @@ async function doAction(type) {
         }
     } finally {
         loading.value = null
+        store.fetchStats()
     }
 }
 
