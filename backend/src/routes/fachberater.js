@@ -59,7 +59,7 @@ router.get('/fachberater/export', async (req, res) => {
 // GET /api/fachberater - List with pagination and filtering
 router.get('/fachberater', async (req, res) => {
     try {
-        const { page = 1, limit = 50, status, rp, search } = req.query;
+        const { page = 1, limit = 50, status, rp, search, sortBy, sortOrder } = req.query;
         const filter = {};
 
         if (status) filter.status = status;
@@ -74,10 +74,19 @@ router.get('/fachberater', async (req, res) => {
             ];
         }
 
+        const allowedSortFields = ['nachname', 'vorname', 'ort', 'matchScore'];
+        let sort;
+        if (sortBy && allowedSortFields.includes(sortBy)) {
+            const order = sortOrder === 'desc' ? -1 : 1;
+            sort = { [sortBy]: order, _id: 1 };
+        } else {
+            sort = { rp: 1, nachname: 1, vorname: 1 };
+        }
+
         const skip = (parseInt(page) - 1) * parseInt(limit);
         const [docs, total] = await Promise.all([
             Fachberater.find(filter)
-                .sort({ rp: 1, nachname: 1, vorname: 1 })
+                .sort(sort)
                 .skip(skip)
                 .limit(parseInt(limit)),
             Fachberater.countDocuments(filter)

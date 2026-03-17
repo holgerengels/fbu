@@ -16,6 +16,10 @@ export const useFachberaterStore = defineStore('fachberater', {
         filterRp: '',
         filterSearch: '',
 
+        // Sort
+        sortBy: '',
+        sortOrder: 'asc',
+
         // Detail
         current: null,
         candidates: [],
@@ -41,6 +45,10 @@ export const useFachberaterStore = defineStore('fachberater', {
                 if (this.filterStatus) params.status = this.filterStatus
                 if (this.filterRp) params.rp = this.filterRp
                 if (this.filterSearch) params.search = this.filterSearch
+                if (this.sortBy) {
+                    params.sortBy = this.sortBy
+                    params.sortOrder = this.sortOrder
+                }
 
                 const { data } = await axios.get('/api/fachberater', { params })
                 this.items = data.data
@@ -217,6 +225,17 @@ export const useFachberaterStore = defineStore('fachberater', {
 
         setPage(p) {
             this.page = p
+            this.fetchList()
+        },
+
+        setSort(field) {
+            if (this.sortBy === field) {
+                this.sortOrder = this.sortOrder === 'asc' ? 'desc' : 'asc'
+            } else {
+                this.sortBy = field
+                this.sortOrder = 'asc'
+            }
+            this.page = 1
             this.fetchList()
         }
     }

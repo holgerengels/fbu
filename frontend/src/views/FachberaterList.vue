@@ -16,7 +16,7 @@
                 @wa-clear="onSearch('')"
             ></wa-input>
             <wa-select class="filter-select" :value="store.filterRp" @change="store.setFilters({ rp: $event.target.value })">
-                <wa-option value="">Alle RP</wa-option>
+                <wa-option value="">Alle RPs</wa-option>
                 <wa-option v-for="rp in rpOptions" :key="rp" :value="rp">{{ rp }}</wa-option>
             </wa-select>
             <wa-select class="filter-select" :value="store.filterStatus" @change="store.setFilters({ status: $event.target.value })">
@@ -41,14 +41,14 @@
             <table>
                 <thead>
                     <tr>
-                        <th>Nachname</th>
-                        <th>Vorname</th>
+                        <th class="sortable" @click="store.setSort('nachname')">Nachname <span class="sort-icon">{{ sortIcon('nachname') }}</span></th>
+                        <th class="sortable" @click="store.setSort('vorname')">Vorname <span class="sort-icon">{{ sortIcon('vorname') }}</span></th>
                         <th>Schule</th>
-                        <th>Ort</th>
+                        <th class="sortable" @click="store.setSort('ort')">Ort <span class="sort-icon">{{ sortIcon('ort') }}</span></th>
                         <th>RP</th>
                         <th>Email</th>
                         <th>Status</th>
-                        <th>Score</th>
+                        <th class="sortable" @click="store.setSort('matchScore')">Score <span class="sort-icon">{{ sortIcon('matchScore') }}</span></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -155,6 +155,11 @@ const displayedPages = computed(() => {
     pages.push(total)
     return pages
 })
+
+function sortIcon(field) {
+    if (store.sortBy !== field) return ''
+    return store.sortOrder === 'asc' ? '▲' : '▼'
+}
 </script>
 
 <style scoped>
@@ -196,5 +201,19 @@ const displayedPages = computed(() => {
     display: inline-flex;
     flex-wrap: wrap;
     gap: 0.25rem;
+}
+
+th.sortable {
+    cursor: pointer;
+    user-select: none;
+    transition: color var(--transition-fast);
+}
+th.sortable:hover {
+    color: var(--text-primary);
+}
+.sort-icon {
+    font-size: 0.7em;
+    margin-left: 0.25em;
+    opacity: 0.8;
 }
 </style>
