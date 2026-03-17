@@ -45,7 +45,7 @@
                 <p class="action-desc">Eindeutige Matches über Jaro-Winkler Ähnlichkeit automatisch zuordnen.</p>
                 <div class="threshold-row">
                     <label class="text-sm text-secondary">Schwellwert:</label>
-                    <wa-input class="threshold-input" type="number" :value="String(threshold)" @input="e => threshold = parseFloat(e.target.value) || 0.85" size="small"></wa-input>
+                    <wa-input class="threshold-input" type="number" :value="String(threshold)" @input="e => threshold = parseFloat(e.target.value) || 0.85" size="small" step="0.05"></wa-input>
                 </div>
                 <wa-button appearance="accent" variant="warning" @click="doAction('auto')" :disabled="loading || !canAutoMatch" :loading="loading === 'auto'">
                     {{ loading === 'auto' ? 'Matche…' : 'Auto-Match starten' }}

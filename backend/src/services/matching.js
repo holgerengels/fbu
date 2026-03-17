@@ -1,8 +1,16 @@
 const natural = require('natural');
+const fs = require('fs');
+const path = require('path');
+
+// Load valid Fächer from config
+const validFaecher = new Set(
+    JSON.parse(fs.readFileSync(path.join(__dirname, '../../../config/faecher.json'), 'utf8'))
+);
 
 /**
  * Calculate Jaro-Winkler similarity between a Fachberater and a MoodleProfile.
  * Compares combined text of Vorname + Nachname + Schule + Ort.
+ * Adds a +0.05 bonus if a valid Fach from the Fachberater matches the MoodleProfile's first Fach.
  */
 function calculateSimilarity(fachberater, moodleProfile) {
     // Exact email match → 100%
@@ -15,7 +23,19 @@ function calculateSimilarity(fachberater, moodleProfile) {
     const fbText = `${fachberater.vorname || ''} ${fachberater.nachname || ''} ${fachberater.schule || ''} ${fachberater.ort || ''}`.trim().toLowerCase();
     const mpText = `${moodleProfile.vorname || ''} ${moodleProfile.nachname || ''} ${moodleProfile.schulname || ''} ${moodleProfile.schulort || ''}`.trim().toLowerCase();
 
-    return natural.JaroWinklerDistance(fbText, mpText);
+    let score = natural.JaroWinklerDistance(fbText, mpText);
+
+    // Fach-Bonus: if any valid Fachberater-Fach matches the first MoodleProfile-Fach
+    const fbFaecher = fachberater.faecher || [];
+    const mpFirstFach = (moodleProfile.faecher && moodleProfile.faecher[0]) || '';
+    if (fbFaecher.length > 0 && mpFirstFach) {
+        const matchingFach = fbFaecher.find(f => validFaecher.has(f) && f === mpFirstFach);
+        if (matchingFach) {
+            score = Math.min(score + 0.05, 1.0);
+        }
+    }
+
+    return score;
 }
 
 /**
