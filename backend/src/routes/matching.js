@@ -105,6 +105,24 @@ router.post('/matching/:id/reject', async (req, res) => {
     }
 });
 
+// POST /api/matching/:id/unmatch - Remove a match / reset to neu
+router.post('/matching/:id/unmatch', async (req, res) => {
+    try {
+        const updated = await Fachberater.findByIdAndUpdate(
+            req.params.id,
+            {
+                $set: { status: ['neu'] },
+                $unset: { moodleId: '', anmeldename: '', email: '', moodleData: '', matchScore: '' }
+            },
+            { new: true }
+        );
+        if (!updated) return res.status(404).json({ error: 'Not found' });
+        res.json(updated);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
 // POST /api/matching/auto - Auto-match all unique matches
 router.post('/matching/auto', async (req, res) => {
     try {

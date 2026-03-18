@@ -139,6 +139,18 @@ export const useFachberaterStore = defineStore('fachberater', {
             }
         },
 
+        async unmatch(id) {
+            this.error = null
+            try {
+                const { data } = await axios.post(`/api/matching/${id}/unmatch`)
+                this.current = data
+                return data
+            } catch (err) {
+                this.error = err.response?.data?.error || err.message
+                throw err
+            }
+        },
+
         async importCsv() {
             this.error = null
             try {

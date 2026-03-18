@@ -17,16 +17,6 @@
                 </wa-button>
             </div>
 
-            <!-- Moodle Import -->
-            <div class="action-card card">
-                <div class="action-icon">🎓</div>
-                <h3 class="action-title">Moodle-Import</h3>
-                <p class="action-desc">Profile vom Fachnetz Moodle abrufen und cachen. Basis für das Matching.</p>
-                <wa-button appearance="filled" @click="doAction('moodle')" :disabled="loading" :loading="loading === 'moodle'">
-                    {{ loading === 'moodle' ? 'Importiere…' : 'Moodle laden' }}
-                </wa-button>
-            </div>
-
             <!-- KUR Import -->
             <div class="action-card card">
                 <div class="action-icon">📚</div>
@@ -36,6 +26,16 @@
                     {{ loading === 'kur' ? 'Importiere…' : 'KUR importieren' }}
                 </wa-button>
                 <span v-if="!canKur" class="text-muted text-sm">⚠ CSV muss zuerst eingelesen werden</span>
+            </div>
+
+            <!-- Moodle Import -->
+            <div class="action-card card">
+                <div class="action-icon">🎓</div>
+                <h3 class="action-title">Moodle-Import</h3>
+                <p class="action-desc">Profile vom Fachnetz Moodle abrufen und cachen. Basis für das Matching.</p>
+                <wa-button appearance="filled" @click="doAction('moodle')" :disabled="loading" :loading="loading === 'moodle'">
+                    {{ loading === 'moodle' ? 'Importiere…' : 'Moodle laden' }}
+                </wa-button>
             </div>
 
             <!-- Auto-Match -->

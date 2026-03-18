@@ -102,7 +102,12 @@
 
                 <!-- Moodle data (when matched) -->
                 <div class="card" v-if="fb.moodleData">
-                    <h2 class="section-title">Moodle-Daten</h2>
+                    <div class="flex items-center justify-between" style="margin-bottom: var(--space-lg);">
+                        <h2 class="section-title" style="margin-bottom: 0;">Moodle-Daten</h2>
+                        <wa-button size="small" variant="danger" appearance="outlined" @click="doUnmatch" :disabled="saving">
+                            Zuordnung aufheben
+                        </wa-button>
+                    </div>
                     <div class="moodle-data">
                         <div v-for="(val, key) in fb.moodleData" :key="key" class="moodle-row">
                             <span class="moodle-key">{{ key }}</span>
@@ -242,6 +247,19 @@ async function reject() {
     try {
         await store.rejectMatch(route.params.id)
         resetForm()
+    } finally {
+        saving.value = false
+    }
+}
+
+async function doUnmatch() {
+    if (!confirm('Zuordnung wirklich aufheben? Die Moodle-Daten werden entfernt und der Status auf "Neu" zurückgesetzt.')) return
+    saving.value = true
+    try {
+        await store.unmatch(route.params.id)
+        resetForm()
+        showCandidates.value = true
+        store.fetchCandidates(route.params.id)
     } finally {
         saving.value = false
     }
