@@ -14,9 +14,11 @@ try {
     console.warn(`[DB] Warning: Error reading settings file: ${err.message}`);
 }
 
-const MONGO_URI = settings.database && settings.database.url
-    ? settings.database.url
-    : 'mongodb://admin:password@localhost:27017/fachberater?authSource=admin';
+if (!settings.database?.url) {
+    console.error('[DB] Error: config/settings.json fehlt oder enthält keine database.url');
+    process.exit(1);
+}
+const MONGO_URI = settings.database.url;
 
 const connectDB = async () => {
     try {

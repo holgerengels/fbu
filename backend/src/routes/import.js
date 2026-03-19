@@ -230,7 +230,15 @@ router.post('/import/kur', async (req, res) => {
                 const existing = bestFb.faecher || [];
                 const merged = [...new Set([...existing, ...faecher])];
 
-                await Fachberater.findByIdAndUpdate(bestFb._id, { faecher: merged });
+                const update = { faecher: merged };
+                // Email aus kur.csv übernehmen, falls vorhanden und FB noch keine hat
+                const kurEmail = (fields[0] || '').trim();
+                if (kurEmail && kurEmail.includes('@') && !bestFb.email) {
+                    update.email = kurEmail;
+                    bestFb.email = kurEmail;
+                }
+
+                await Fachberater.findByIdAndUpdate(bestFb._id, update);
                 // Update in-memory for subsequent dedup
                 bestFb.faecher = merged;
                 matched++;

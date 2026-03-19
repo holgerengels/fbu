@@ -26,6 +26,7 @@
                             .value="statusBadges" @wa-change="onBadgeChange">
                             <wa-option value="neu"><wa-tag variant="brand" appearance="outlined" pill size="small">Neu</wa-tag></wa-option>
                             <wa-option value="registriert"><wa-tag variant="success" appearance="outlined" pill size="small">Registriert</wa-tag></wa-option>
+                            <wa-option value="nicht_registriert"><wa-tag variant="danger" appearance="outlined" pill size="small">Nicht registriert</wa-tag></wa-option>
                             <wa-option value="vollstaendig"><wa-tag variant="warning" appearance="outlined" pill size="small">Vollständig</wa-tag></wa-option>
                         </wa-select>
                         <span class="text-secondary text-sm" v-if="fb.matchScore">Score: {{ (fb.matchScore * 100).toFixed(1) }}%</span>
@@ -186,6 +187,7 @@ const badgeVariants = {
     'neu': 'brand',
     'registriert': 'success',
     'nicht registriert': 'danger',
+    'nicht_registriert': 'danger',
     'vollständig': 'warning'
 }
 

@@ -14,7 +14,7 @@ const fachberaterSchema = new mongoose.Schema({
     status: {
         type: [String],
         enum: ['neu', 'registriert', 'nicht_registriert', 'vollstaendig'],
-        default: ['neu']
+        default: []
     },
     matchScore: { type: Number, default: 0 }
 }, {
