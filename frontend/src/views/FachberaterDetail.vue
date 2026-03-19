@@ -23,11 +23,11 @@
                     <h1 class="page-title">{{ fb.vorname }} {{ fb.nachname }}</h1>
                     <div class="flex items-center gap-md badge-row">
                         <wa-select ref="badgeSelect" multiple with-clear size="small" class="badge-select"
-                            .value="statusBadges" @wa-change="onBadgeChange">
-                            <wa-option value="neu"><wa-tag variant="brand" appearance="outlined" pill size="small">Neu</wa-tag></wa-option>
-                            <wa-option value="registriert"><wa-tag variant="success" appearance="outlined" pill size="small">Registriert</wa-tag></wa-option>
-                            <wa-option value="nicht_registriert"><wa-tag variant="danger" appearance="outlined" pill size="small">Nicht registriert</wa-tag></wa-option>
-                            <wa-option value="vollstaendig"><wa-tag variant="warning" appearance="outlined" pill size="small">Vollständig</wa-tag></wa-option>
+                            .value="statusBadges" @change="onBadgeChange">
+                            <wa-option value="neu">Neu</wa-option>
+                            <wa-option value="registriert">Registriert</wa-option>
+                            <wa-option value="nicht_registriert">Nicht registriert</wa-option>
+                            <wa-option value="vollstaendig">Vollständig</wa-option>
                         </wa-select>
                         <span class="text-secondary text-sm" v-if="fb.matchScore">Score: {{ (fb.matchScore * 100).toFixed(1) }}%</span>
                     </div>
@@ -277,7 +277,16 @@ const navTotal = ref(0)
 
 async function fetchNeighbors() {
     try {
-        const { data } = await axios.get(`/api/fachberater/${route.params.id}/neighbors`)
+        const params = {}
+        if (store.filterStatus) params.status = store.filterStatus
+        if (store.filterRp) params.rp = store.filterRp
+        if (store.filterSearch) params.search = store.filterSearch
+        if (store.sortBy) {
+            params.sortBy = store.sortBy
+            params.sortOrder = store.sortOrder
+        }
+        
+        const { data } = await axios.get(`/api/fachberater/${route.params.id}/neighbors`, { params })
         navPrevId.value = data.prevId
         navNextId.value = data.nextId
         navIndex.value = data.index

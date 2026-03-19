@@ -109,19 +109,28 @@ router.get('/fachberater/:id/neighbors', async (req, res) => {
         const doc = await Fachberater.findById(req.params.id);
         if (!doc) return res.status(404).json({ error: 'Not found' });
 
-        const sort = { rp: 1, nachname: 1, vorname: 1, _id: 1 };
+        const { status, rp, search, sortBy, sortOrder } = req.query;
+
+        const allowedSortFields = ['nachname', 'vorname', 'ort', 'matchScore'];
+        let sort;
+        if (sortBy && allowedSortFields.includes(sortBy)) {
+            const order = sortOrder === 'desc' ? -1 : 1;
+            sort = { [sortBy]: order, _id: 1 };
+        } else {
+            sort = { rp: 1, nachname: 1, vorname: 1, _id: 1 };
+        }
 
         // Build filter for optional status/rp/search filters
         const filter = {};
-        if (req.query.status) filter.status = req.query.status;
-        if (req.query.rp) filter.rp = req.query.rp;
-        if (req.query.search) {
+        if (status) filter.status = status;
+        if (rp) filter.rp = rp;
+        if (search) {
             filter.$or = [
-                { nachname: { $regex: req.query.search, $options: 'i' } },
-                { vorname: { $regex: req.query.search, $options: 'i' } },
-                { schule: { $regex: req.query.search, $options: 'i' } },
-                { ort: { $regex: req.query.search, $options: 'i' } },
-                { email: { $regex: req.query.search, $options: 'i' } }
+                { nachname: { $regex: search, $options: 'i' } },
+                { vorname: { $regex: search, $options: 'i' } },
+                { schule: { $regex: search, $options: 'i' } },
+                { ort: { $regex: search, $options: 'i' } },
+                { email: { $regex: search, $options: 'i' } }
             ];
         }
 
@@ -167,6 +176,8 @@ router.put('/fachberater/:id', async (req, res) => {
         if (faecher !== undefined) update.faecher = faecher;
         if (status !== undefined) update.status = status;
 
+        console.log('[PUT] received status:', JSON.stringify(status));
+
         // Auto-check completeness
         const doc = await Fachberater.findById(req.params.id);
         if (!doc) return res.status(404).json({ error: 'Not found' });
@@ -183,7 +194,10 @@ router.put('/fachberater/:id', async (req, res) => {
             }
         }
 
+        console.log('[PUT] saving status:', JSON.stringify(update.status));
+
         const updated = await Fachberater.findByIdAndUpdate(req.params.id, update, { new: true });
+        console.log('[PUT] returned status:', JSON.stringify(updated.status));
         res.json(updated);
     } catch (err) {
         res.status(500).json({ error: err.message });
