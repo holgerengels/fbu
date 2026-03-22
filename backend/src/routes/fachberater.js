@@ -1,7 +1,21 @@
 const express = require('express');
 const router = express.Router();
+const fs = require('fs');
+const path = require('path');
 const Fachberater = require('../models/Fachberater');
 const MoodleProfile = require('../models/MoodleProfile');
+
+let settingsPath = path.join(__dirname, '../../../config/settings.json');
+let settings = {};
+try {
+    if (fs.existsSync(settingsPath)) {
+        settings = JSON.parse(fs.readFileSync(settingsPath, 'utf8'));
+    }
+} catch (err) {
+    console.warn(`[Config] Warning: ${err.message}`);
+}
+const moodleConfig = settings.moodle || {};
+const moodleBaseUrl = (moodleConfig.url || 'https://fachnetz-bs.zsl-bw.de').replace(/\/$/, '');
 
 // GET /api/fachberater/stats - Dashboard statistics
 router.get('/fachberater/stats', async (req, res) => {
@@ -43,10 +57,18 @@ router.get('/fachberater/export', async (req, res) => {
 
         const docs = await Fachberater.find(filter).sort({ rp: 1, nachname: 1, vorname: 1 });
 
-        const header = 'RP;Nachname;Vorname;Schule;Ort;Email;Anmeldename;Fächer;Status';
-        const rows = docs.map(d =>
-            `"${d.rp}";"${d.nachname}";"${d.vorname}";"${d.schule}";"${d.ort}";"${d.email}";"${d.anmeldename}";"${(d.faecher || []).join(', ')}";"${(d.status || []).join('+')}"`
-        );
+        const header = 'RP;Nachname;Vorname;Schule;Ort;Email;Anmeldename;Fächer;Status;Moodle-Profil;Moodle-Fächer';
+        const rows = docs.map(d => {
+            let moodleLink = '';
+            let moodleFaecher = '';
+            if (d.moodleId && !String(d.moodleId).startsWith('csv_')) {
+                moodleLink = `${moodleBaseUrl}/user/view.php?id=${d.moodleId}`;
+            }
+            if (d.moodleData && Array.isArray(d.moodleData.faecher)) {
+                moodleFaecher = d.moodleData.faecher.join(', ');
+            }
+            return `"${d.rp}";"${d.nachname}";"${d.vorname}";"${d.schule}";"${d.ort}";"${d.email}";"${d.anmeldename}";"${(d.faecher || []).join(', ')}";"${(d.status || []).join('+')}";"${moodleLink}";"${moodleFaecher}"`;
+        });
 
         res.setHeader('Content-Type', 'text/csv; charset=utf-8');
         res.setHeader('Content-Disposition', 'attachment; filename=fachberater_export.csv');

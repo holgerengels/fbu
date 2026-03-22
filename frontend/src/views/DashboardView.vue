@@ -17,6 +17,10 @@
                     <div class="stat-value">{{ store.stats.neu }}</div>
                     <div class="stat-label">Neu</div>
                 </div>
+                <div class="stat-card stat-red">
+                    <div class="stat-value">{{ store.stats.nicht_registriert }}</div>
+                    <div class="stat-label">Nicht registriert</div>
+                </div>
                 <div class="stat-card stat-green">
                     <div class="stat-value">{{ store.stats.registriert }}</div>
                     <div class="stat-label">Registriert</div>
@@ -51,6 +55,13 @@
                             <div class="progress-fill fill-blue" :style="{ width: pct('neu') }"></div>
                         </div>
                         <span class="progress-pct">{{ pct('neu') }}</span>
+                    </div>
+                    <div class="progress-row">
+                        <span class="progress-label">Nicht registriert</span>
+                        <div class="progress-track">
+                            <div class="progress-fill fill-red" :style="{ width: pct('nicht_registriert') }"></div>
+                        </div>
+                        <span class="progress-pct">{{ pct('nicht_registriert') }}</span>
                     </div>
                 </div>
             </div>
